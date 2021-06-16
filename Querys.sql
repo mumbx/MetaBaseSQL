@@ -60,7 +60,7 @@ FROM
 WHERE 
 	grid >= 20 AND positionOrder =1
 
---quais equipes mais pontuaram no mesmo premio?
+--quais equipes mais pontuaram em um GP?
 SELECT	
 	C.year as Ano,
 	CR.name as Montadora,
@@ -80,7 +80,7 @@ GROUP BY
 ORDER BY 3 DESC
 LIMIT 5
 
-
+-- incomplete
 SELECT	
 	C.Year AS Ano,
 	CONCAT(forename, ' ', surname) AS 'Nome do piloto',
@@ -98,3 +98,11 @@ FROM
 GROUP BY CONCAT(forename, ' ', surname), C.YEAR
 
 ORDER BY 3 DESC
+
+-- Tempo médio dos pitstops de Michael Schumacher
+
+SELECT pilotos.*, AVG((pitstops.duration)/10) as media 
+FROM pilotos, pitstops
+WHERE pilotos.driverId = pitstops.driverId
+AND pilotos.driverId = 30
+GROUP BY pilotos.driverId;
