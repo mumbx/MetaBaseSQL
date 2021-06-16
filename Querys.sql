@@ -20,3 +20,81 @@ select * from corridas where circuitId = 18;
 
 -- Países com maior número de pilotos disputando a fórmula 1.
 SELECT max(nationality) FROM pilotos;
+
+--qual as equipes que mais venceram em interlagos?
+SELECT 
+
+	CR.name as Montadora
+    ,count(positionOrder) as "Total de vitorias"
+	,CASE
+    WHEN CI.name = 'Autódromo José Carlos Pace' THEN 'Autódromo de Interlagos'
+    END as "Pista"
+    
+FROM 
+	Resultados R 
+    JOIN Construtores CR    
+    ON CR.constructorId = R.constructorId
+    JOIN Corridas C 
+    ON C.raceId = R.raceId
+    JOIN Circuitos CI 
+    ON CI.circuitid = C.circuitID
+WHERE
+	CI.circuitid = 18
+GROUP BY
+	CR.name
+ORDER BY 2 DESC
+LIMIT 5
+
+--algum piloto já largou em último e conseguiu ganhar a corrida?
+SELECT 
+	concat(forename, ' ', surname) as 'Nome do piloto',
+    C.year as Ano,
+    C.name as "Nome do Premio"
+
+FROM 
+	pilotos P
+    JOIN Resultados R
+	ON R.driverId = P.driverId	
+    JOIN Corridas C 
+    ON C.raceId = R.raceId
+WHERE 
+	grid >= 20 AND positionOrder =1
+
+--quais equipes mais pontuaram no mesmo premio?
+SELECT	
+	C.year as Ano,
+	CR.name as Montadora,
+    sum(R.points) as Pontos 
+    
+FROM 
+	Resultados R 
+    JOIN Construtores CR    
+    ON CR.constructorId = R.constructorId
+    JOIN Corridas C 
+    ON C.raceId = R.raceId
+    JOIN Circuitos CI 
+    ON CI.circuitid = C.circuitID
+GROUP BY
+	CR.name, C.year
+
+ORDER BY 3 DESC
+LIMIT 5
+
+
+SELECT	
+	C.Year AS Ano,
+	CONCAT(forename, ' ', surname) AS 'Nome do piloto',
+    SUM(r.points) AS 'Total de pontos'   
+FROM 
+	Resultados R 
+    JOIN Construtores CR    
+    ON CR.constructorId = R.constructorId
+    JOIN Corridas C 
+    ON C.raceId = R.raceId
+    JOIN Circuitos CI 
+    ON CI.circuitid = C.circuitID
+    JOIN Pilotos P
+    ON P.driverId = R.driverId
+GROUP BY CONCAT(forename, ' ', surname), C.YEAR
+
+ORDER BY 3 DESC
