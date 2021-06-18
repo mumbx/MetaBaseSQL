@@ -106,3 +106,40 @@ FROM pilotos, pitstops
 WHERE pilotos.driverId = pitstops.driverId
 AND pilotos.driverId = 30
 GROUP BY pilotos.driverId;
+
+-- Top 3 pilotos com mais vitórias
+SELECT tabela1.* FROM
+(SELECT concat(pilotos.forename, ' ', pilotos.surname) as piloto, count(resultados.positionOrder) as vitorias
+FROM pilotos
+LEFT JOIN resultados
+on pilotos.driverId=resultados.driverId AND resultados.positionOrder = 1
+GROUP BY concat(pilotos.forename, ' ', pilotos.surname) order by vitorias desc limit 3
+) as tabela1;
+
+-- Top 3 equipes que mais venceram
+SELECT tabela1.* FROM
+(SELECT construtores.name, count(resultados.positionOrder) as vitorias
+FROM construtores
+LEFT JOIN resultados
+on construtores.constructorId=resultados.constructorId AND resultados.positionOrder = 1
+GROUP BY construtores.name order by vitorias desc limit 3
+) as tabela1;
+
+-- Top 3 maiores velocidades atingidas
+SELECT tabela1.* from
+(SELECT construtores.name, max(resultados.fastestLapSpeed) as vel_maxima
+FROM construtores
+LEFT JOIN resultados
+ON construtores.constructorId=resultados.constructorId
+group by construtores.name
+order by vel_maxima DESC) as tabela1
+where tabela1.vel_maxima > 100;
+
+-- Top 3 pilotos que mais largaram em primeiro
+SELECT tabela1.* FROM
+(SELECT concat(pilotos.forename, ' ', pilotos.surname) as piloto, count(resultados.grid) as pole_position
+FROM pilotos
+LEFT JOIN resultados
+on pilotos.driverId=resultados.driverId AND resultados.grid = 1
+GROUP BY concat(pilotos.forename, ' ', pilotos.surname) order by pole_position desc limit 3
+) as tabela1;
